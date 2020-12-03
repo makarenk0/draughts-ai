@@ -40,7 +40,7 @@ namespace draughts_ai
 
             JoinTheGame();
             MakeMove("[9, 13]");
-            //Task.Delay(2000).ContinueWith(t => );
+          
          
            
 
@@ -82,14 +82,13 @@ namespace draughts_ai
             _token = parsedResult.RootElement.GetProperty("data").GetProperty("token").GetRawText().Trim('\"');
             _myColor = parsedResult.RootElement.GetProperty("data").GetProperty("color").GetRawText().Trim('\"') == "RED" ? DraughtColor.RED : DraughtColor.BLACK;
 
-
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
-
+            client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _token);
         }
 
         private void MakeMove(string move)
         {
-            HttpContent httpContent = new StringContent(String.Concat("\"name\": \"Make move\",", "\"move\": ", move));
+            
+            HttpContent httpContent = new StringContent(String.Concat("{\"name\": \"Make move\",", "\"move\": ", move, "}"));
             String result = PostAsync(_makeMoveRequest, httpContent).Result;
         }
 
@@ -111,7 +110,7 @@ namespace draughts_ai
                 _joinGameRequest = _gameJoinRequestPattern.GetProperty("request").GetProperty("url").GetProperty("raw").GetRawText().Trim('\"');
 
                 _makeMoveRequestPattern = _root.GetProperty("item")[2];
-                _makeMoveRequest = _gameJoinRequestPattern.GetProperty("request").GetProperty("url").GetProperty("raw").GetRawText().Trim('\"');
+                _makeMoveRequest = _makeMoveRequestPattern.GetProperty("request").GetProperty("url").GetProperty("raw").GetRawText().Trim('\"');
             }
             else
             {
