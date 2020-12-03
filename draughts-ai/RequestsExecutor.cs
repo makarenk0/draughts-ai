@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -12,26 +13,37 @@ namespace draughts_ai
     {
 
         private HttpClient client;
-        private const String _getGameInfoRequest = "http://192.168.1.19:8081/game";
-        private const String _joinGameRequest = "http://192.168.1.19:8081/game?team_name=Loom";
-        //private const String _getGameInfoRequest = "http://192.168.1.19:8081/game";
+        private String _getGameInfoRequest = "";
+        private String _joinGameRequest = "";
+        private String _makeMoveRequest = "";
 
         private JsonElement _root;
-        //private JsonElement _gameInfoRequestPattern;
+        private JsonElement _gameInfoRequestPattern;
         private JsonElement _gameJoinRequestPattern;
         private JsonElement _makeMoveRequestPattern;
+
+        private DraughtColor _myColor;
+        private String _token;
+
+
+        public enum DraughtColor
+        {
+           RED,
+           BLACK
+        };
 
         public RequestsExecutor(String requestsPatternsFilename)
         {
             client = new HttpClient();
             LoadRequestsPatterns(requestsPatternsFilename);
-            
 
-            String res = GetAsync(_getGameInfoRequest).Result;
-            String res1 = PostAsync(_joinGameRequest, _gameJoinRequestPattern.GetRawText()).Result;
 
-            Console.WriteLine(res);
-            Console.WriteLine(res1);
+            JoinTheGame();
+            MakeMove("[9, 13]");
+            //Task.Delay(2000).ContinueWith(t => );
+         
+           
+
         }
 
 
@@ -46,13 +58,11 @@ namespace draughts_ai
             return responseJSON;
         }
 
-        private async Task<String> PostAsync(string path, string content)
+        private async Task<String> PostAsync(string path, HttpContent httpContent)
         {
-            HttpContent httpContent = new StringContent(content);
             HttpResponseMessage response = await client.PostAsync(path, httpContent);
 
             String responseJSON = "";
-            String errorMsg = "";
             if (response.IsSuccessStatusCode)
             {
                 responseJSON = await response.Content.ReadAsStringAsync();
@@ -61,6 +71,26 @@ namespace draughts_ai
             }
             return response.ReasonPhrase;
             
+        }
+        
+        private void JoinTheGame()
+        {
+            HttpContent httpContent = new StringContent(_gameJoinRequestPattern.GetRawText());
+            String result = PostAsync(_joinGameRequest, httpContent).Result;
+
+            using JsonDocument parsedResult = JsonDocument.Parse(result);
+            _token = parsedResult.RootElement.GetProperty("data").GetProperty("token").GetRawText().Trim('\"');
+            _myColor = parsedResult.RootElement.GetProperty("data").GetProperty("color").GetRawText().Trim('\"') == "RED" ? DraughtColor.RED : DraughtColor.BLACK;
+
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+
+        }
+
+        private void MakeMove(string move)
+        {
+            HttpContent httpContent = new StringContent(String.Concat("\"name\": \"Make move\",", "\"move\": ", move));
+            String result = PostAsync(_makeMoveRequest, httpContent).Result;
         }
 
 
@@ -72,8 +102,16 @@ namespace draughts_ai
                 using JsonDocument doc = JsonDocument.Parse(text);
                 _root = doc.RootElement.Clone();
 
-                //_gameInfoRequestPattern = _root.GetProperty("item")[0];
+             
+
+                _gameInfoRequestPattern = _root.GetProperty("item")[0];
+                _getGameInfoRequest = _gameInfoRequestPattern.GetProperty("request").GetProperty("url").GetProperty("raw").GetRawText().Trim('\"');
+
                 _gameJoinRequestPattern = _root.GetProperty("item")[1];
+                _joinGameRequest = _gameJoinRequestPattern.GetProperty("request").GetProperty("url").GetProperty("raw").GetRawText().Trim('\"');
+
+                _makeMoveRequestPattern = _root.GetProperty("item")[2];
+                _makeMoveRequest = _gameJoinRequestPattern.GetProperty("request").GetProperty("url").GetProperty("raw").GetRawText().Trim('\"');
             }
             else
             {
