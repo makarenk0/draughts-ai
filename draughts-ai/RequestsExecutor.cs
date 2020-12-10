@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace draughts_ai
@@ -39,10 +40,8 @@ namespace draughts_ai
 
 
             JoinTheGame();
-            MakeMove("[9, 13]");
-          
-         
            
+            MakeMove("[9, 13]");
 
         }
 
@@ -101,16 +100,14 @@ namespace draughts_ai
                 using JsonDocument doc = JsonDocument.Parse(text);
                 _root = doc.RootElement.Clone();
 
-             
-
                 _gameInfoRequestPattern = _root.GetProperty("item")[0];
-                _getGameInfoRequest = _gameInfoRequestPattern.GetProperty("request").GetProperty("url").GetProperty("raw").GetRawText().Trim('\"');
+                _getGameInfoRequest = _gameInfoRequestPattern.GetProperty("url").GetRawText().Trim('\"');
 
                 _gameJoinRequestPattern = _root.GetProperty("item")[1];
-                _joinGameRequest = _gameJoinRequestPattern.GetProperty("request").GetProperty("url").GetProperty("raw").GetRawText().Trim('\"');
+                _joinGameRequest = _gameJoinRequestPattern.GetProperty("url").GetRawText().Trim('\"');
 
                 _makeMoveRequestPattern = _root.GetProperty("item")[2];
-                _makeMoveRequest = _makeMoveRequestPattern.GetProperty("request").GetProperty("url").GetProperty("raw").GetRawText().Trim('\"');
+                _makeMoveRequest = _makeMoveRequestPattern.GetProperty("url").GetRawText().Trim('\"');
             }
             else
             {
