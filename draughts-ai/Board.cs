@@ -13,12 +13,24 @@ namespace draughts_ai
         // 3 - red king
         // 4 - black king
         public int[,] Matrix { get; set; }
-        
 
+        public int[,] Test = new int[,]
+        {
+            { 0, 2, 0, 0, 0, 0, 0, 2},
+            { 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0, 0, 0, 0, 3, 0, 0, 0},
+            { 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0, 0, 4, 0, 0, 0, 0, 0},
+            { 0, 0, 0, 0, 0, 0, 0, 4},
+            { 0, 0, 0, 0, 0, 0, 0, 0}
+        };
 
         public Board()
         {
             Matrix = new int[8, 8];
+
+            Matrix = Test;
         }
 
         //agent index 0 - Red
@@ -64,12 +76,12 @@ namespace draughts_ai
             for (int i = 0; i < 4; i++) 
             {
                 //init
-                int startX = x + arr[i % 2], startY = y + arr[(i+1) % 2];
-                moves.Add(EmptyAndExist(startX, startY) ? new KeyValuePair<int[], int>(new int[] { ConvertToPDN(startX, startY) }, 0) : new KeyValuePair<int[], int>(new int[0], 0));
+                int startX = x + arr[i % 2], startY = y + arr[i / 2];
+                moves.Add(EmptyAndExist(startX, startY) ? new KeyValuePair<int[], int>(new int[] { ConvertToPDN(x, y), ConvertToPDN(startX, startY) }, 0) : new KeyValuePair<int[], int>(new int[0], 0));
                 
                 //first step  TO DO: reduce dublicating code
                 startX += arr[i % 2];
-                startY += arr[(i + 1) % 2];
+                startY += arr[i / 2];
 
                 //steps till cant go
                 while (EmptyAndExist(startX, startY))
@@ -81,7 +93,7 @@ namespace draughts_ai
                     moves.Add(new KeyValuePair<int[], int>(newSteps, 0));
 
                     startX += arr[i % 2];
-                    startY += arr[(i + 1) % 2];
+                    startY += arr[i / 2];
                 }
             }
 

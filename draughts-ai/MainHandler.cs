@@ -13,7 +13,7 @@ namespace draughts_ai
         public MainHandler(string filename_URLs)
         {
             Filename = filename_URLs;
-            ReqExecutor = new RequestsExecutor(Filename);
+            //ReqExecutor = new RequestsExecutor(Filename);
             Running = true;
             EventLoop();
         }
@@ -21,7 +21,7 @@ namespace draughts_ai
         private void EventLoop()
         {
             Board b = new Board();
-            b.Matrix = ReqExecutor.GetBoardState();
+            //b.Matrix = ReqExecutor.GetBoardState();
             b.PrintBoard();
             List<KeyValuePair<int[], int>> steps = b.GetPossibleSteps(0);
             while (Running)

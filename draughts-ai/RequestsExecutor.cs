@@ -41,7 +41,6 @@ namespace draughts_ai
             JoinTheGame();
            
             //MakeMove("[9, 13]");
-
         }
 
 
