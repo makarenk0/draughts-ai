@@ -17,12 +17,12 @@ namespace draughts_ai
         public int[,] Test = new int[,]
         {
             { 0, 0, 0, 2, 0, 0, 0, 0},
+            { 3, 0, 0, 0, 0, 0, 0, 0},
+            { 0, 2, 0, 2, 0, 2, 0, 0},
             { 0, 0, 0, 0, 0, 0, 0, 0},
-            { 0, 2, 0, 2, 0, 0, 0, 0},
-            { 0, 0, 3, 0, 0, 0, 0, 0},
-            { 0, 2, 0, 2, 0, 0, 0, 0},
+            { 0, 0, 0, 2, 0, 2, 0, 0},
             { 0, 0, 0, 0, 0, 0, 0, 0},
-            { 0, 2, 0, 0, 0, 0, 0, 0},
+            { 0, 0, 0, 0, 0, 0, 0, 0},
             { 0, 0, 0, 0, 0, 0, 0, 0}
         };
 
@@ -107,9 +107,8 @@ namespace draughts_ai
                     int directionX = arr[i % 2];
                     int directionY = arr[i / 2];
                     
-                    //preventing jumping "forward and backward"
-                    KeyValuePair<int, int> prevPoint = path.Length > 1 ? ConvertFromPDN(path[path.Length - 2]) : new KeyValuePair<int, int>(-1, -1);
-                    if (x + (2*directionX) == prevPoint.Key && y + (2*directionY) == prevPoint.Value) continue;
+                    //preventing jumping "forward and backward" and looping
+                    if (path.Where(el => el == ConvertToPDN(x + (2*directionX), y + (2*directionY))).Count() != 0) continue;
 
                     if (EmptyAndExist(x + (directionX * 2), y + (directionY * 2)) && IsPresent(x + directionX, y + directionY, toBeat))
                     {
@@ -126,6 +125,10 @@ namespace draughts_ai
                 for (int i = 0; i < 2; i++)
                 {
                     int directionY = (i == 0) ? 1 : -1;
+
+                    //Don't need <preventing jumping "forward and backward" and looping> because men can only beat forward
+                
+
                     if (EmptyAndExist(x + (directionX * 2), y + (directionY * 2)) && IsPresent(x + directionX, y + directionY, toBeat))
                     {
                         tryFuther[path.Length] = ConvertToPDN(x + (directionX * 2), y + (directionY * 2));
