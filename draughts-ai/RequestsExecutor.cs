@@ -23,9 +23,10 @@ namespace draughts_ai
         private JsonElement _gameJoinRequestPattern;
         private JsonElement _makeMoveRequestPattern;
 
-        private DraughtColor _myColor;
+        private String _myColor;
         private String _token;
 
+        public string MyColor { get => _myColor; set => _myColor = value; }
 
         public enum DraughtColor
         {
@@ -37,12 +38,31 @@ namespace draughts_ai
         {
             client = new HttpClient();
             LoadRequestsPatterns(requestsPatternsFilename);
-
-
             JoinTheGame();
            
-            MakeMove("[9, 13]");
+            //MakeMove("[9, 13]");
 
+        }
+
+
+        public int[,] GetBoardState()
+        {
+            String board = GetAsync(_getGameInfoRequest).Result;
+
+            using JsonDocument parsedResult = JsonDocument.Parse(board);
+            JsonElement boardRaw = parsedResult.RootElement.GetProperty("data").GetProperty("board");
+
+            int[,] result = new int[8, 8];
+            for (int i = 0; i < boardRaw.GetArrayLength(); i++)
+            {
+                String color = boardRaw[i].GetProperty("color").GetRawText().Trim('\"');
+                bool king = boardRaw[i].GetProperty("king").GetRawText() == "true" ? true : false;
+                int x = (int)UInt32.Parse(boardRaw[i].GetProperty("row").GetRawText());
+                int y = (int)UInt32.Parse(boardRaw[i].GetProperty("column").GetRawText());
+                result[(y * 2) + (1 * ((x + 1) % 2)), x] = "RED" == color ? (king ? 3 : 1) : (king ? 4 : 2);
+            }
+
+            return result;
         }
 
 
@@ -79,7 +99,7 @@ namespace draughts_ai
 
             using JsonDocument parsedResult = JsonDocument.Parse(result);
             _token = parsedResult.RootElement.GetProperty("data").GetProperty("token").GetRawText().Trim('\"');
-            _myColor = parsedResult.RootElement.GetProperty("data").GetProperty("color").GetRawText().Trim('\"') == "RED" ? DraughtColor.RED : DraughtColor.BLACK;
+            MyColor = parsedResult.RootElement.GetProperty("data").GetProperty("color").GetRawText().Trim('\"');
 
             client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _token);
         }

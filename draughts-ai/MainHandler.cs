@@ -8,11 +8,28 @@ namespace draughts_ai
     {
         public String Filename { get; set; }
         public RequestsExecutor ReqExecutor { get; set; }
+        public bool Running { get; set; }
 
         public MainHandler(string filename_URLs)
         {
             Filename = filename_URLs;
             ReqExecutor = new RequestsExecutor(Filename);
+            Running = true;
+            EventLoop();
         }
+
+        private void EventLoop()
+        {
+            Board b = new Board();
+            b.Matrix = ReqExecutor.GetBoardState();
+            b.PrintBoard();
+            List<KeyValuePair<int[], int>> steps = b.GetPossibleSteps(0);
+            while (Running)
+            {
+
+            }
+
+        }
+
     }
 }
