@@ -169,22 +169,23 @@ namespace draughts_ai
                 if (EmptyAndExist(startX, startY)) {
                     moves.Add(new KeyValuePair<int[], int>(new int[] { ConvertToPDN(x, y), ConvertToPDN(startX, startY) }, 0));
 
-                    //first step  TO DO: reduce dublicating code
-                    startX += arr[i % 2];
-                    startY += arr[i / 2];
+                    ////first step  TO DO: reduce dublicating code   // if you want standart draughts with king moving along digonal unlimitly uncomment this code
+                    //startX += arr[i % 2];
+                    //startY += arr[i / 2];
 
-                    //steps till cant go
-                    while (EmptyAndExist(startX, startY))
-                    {
-                        int sourceLength = moves.Last().Key.Length;
-                        int[] newSteps = new int[sourceLength + 1];
-                        Array.Copy(moves.Last().Key, 0, newSteps, 0, sourceLength);
-                        newSteps[sourceLength] = ConvertToPDN(startX, startY);
-                        moves.Add(new KeyValuePair<int[], int>(newSteps, 0));
+                    ////steps till cant go
+                    //while (EmptyAndExist(startX, startY))
+                    //{
+                    //    //int sourceLength = moves.Last().Key.Length;
+                    //    int[] newSteps = new int[2];
+                    //    newSteps[0] = moves.Last().Key[0];
+                    //    //Array.Copy(moves.Last().Key, 0, newSteps, 0, sourceLength);
+                    //    newSteps[1] = ConvertToPDN(startX, startY);
+                    //    moves.Add(new KeyValuePair<int[], int>(newSteps, 0));
 
-                        startX += arr[i % 2];
-                        startY += arr[i / 2];
-                    }
+                    //    startX += arr[i % 2];
+                    //    startY += arr[i / 2];
+                    //}
                 }
             }
 
