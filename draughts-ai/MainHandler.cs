@@ -29,19 +29,23 @@ namespace draughts_ai
             {
                 Thread.Sleep(1000);
             }
-
+            timer.Dispose();
         }
 
         private void timer_Tick(object state)
         {
-            KeyValuePair<bool, int[,]> tryRequest = ReqExecutor.GetBoardState();
-            if (tryRequest.Key)
+            KeyValuePair<int, int[,]> tryRequest = ReqExecutor.GetBoardState();
+            if (tryRequest.Key == 1)
             {
                 Board freshData = new Board();
                 freshData.Matrix = tryRequest.Value;
                 MinimaxTree tree = new MinimaxTree(freshData, ReqExecutor.MyColor);
                 String move = String.Join(", ", tree.Answer);
                 ReqExecutor.MakeMove(String.Concat("[", move, "]"));
+            }
+            else if(tryRequest.Key == 2)
+            {
+                Running = false;
             }
         }
 

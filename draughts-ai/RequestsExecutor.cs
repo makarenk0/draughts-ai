@@ -44,16 +44,21 @@ namespace draughts_ai
         }
 
 
-        public KeyValuePair<bool, int[,]> GetBoardState()
+        public KeyValuePair<int, int[,]> GetBoardState()
         {
             String board = GetAsync(_getGameInfoRequest).Result;
 
             using JsonDocument parsedResult = JsonDocument.Parse(board);
-            
-            //in case not my turn
-            if(parsedResult.RootElement.GetProperty("data").GetProperty("whose_turn").GetRawText().Trim('\"') != MyColor)
+
+            //in case game is over
+            if (parsedResult.RootElement.GetProperty("data").GetProperty("status").GetRawText().Trim('\"') == "Game is over")
             {
-                return new KeyValuePair<bool, int[,]>(false, null);
+                return new KeyValuePair<int, int[,]>(2, null);
+            }
+            //in case not my turn
+            if (parsedResult.RootElement.GetProperty("data").GetProperty("whose_turn").GetRawText().Trim('\"') != MyColor)
+            {
+                return new KeyValuePair<int, int[,]>(0, null);
             }
 
             JsonElement boardRaw = parsedResult.RootElement.GetProperty("data").GetProperty("board");
@@ -67,7 +72,7 @@ namespace draughts_ai
                 result[(y * 2) + (1 * ((x + 1) % 2)), x] = "RED" == color ? (king ? 3 : 1) : (king ? 4 : 2);
             }
 
-            return new KeyValuePair<bool, int[,]>(true, result);
+            return new KeyValuePair<int, int[,]>(1, result);
         }
 
 
