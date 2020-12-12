@@ -23,7 +23,10 @@ namespace draughts_ai
             Board b = new Board();
             //b.Matrix = ReqExecutor.GetBoardState();
             b.PrintBoard();
-            List<KeyValuePair<int[], int>> steps = b.GetPossibleSteps(0);
+            b.ApplyStep(new int[] { 32, 27});
+            Console.WriteLine();
+            b.PrintBoard();
+            //List<KeyValuePair<int[], int>> steps = b.GetPossibleSteps(0);
             while (Running)
             {
 

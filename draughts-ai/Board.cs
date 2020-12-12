@@ -16,14 +16,14 @@ namespace draughts_ai
 
         public int[,] Test = new int[,]
         {
-            { 0, 0, 0, 2, 0, 0, 0, 0},
-            { 3, 0, 0, 0, 0, 0, 0, 0},
-            { 0, 2, 0, 2, 0, 2, 0, 0},
+            { 0, 0, 0, 0, 0, 0, 0, 2},
+            { 1, 0, 0, 0, 0, 0, 1, 0},
+            { 0, 2, 0, 0, 0, 0, 0, 0},
+            { 0, 0, 0, 0, 1, 0, 0, 0},
             { 0, 0, 0, 0, 0, 0, 0, 0},
-            { 0, 0, 0, 2, 0, 2, 0, 0},
             { 0, 0, 0, 0, 0, 0, 0, 0},
-            { 0, 0, 0, 0, 0, 0, 0, 0},
-            { 0, 0, 0, 0, 0, 0, 0, 0}
+            { 0, 0, 0, 0, 0, 0, 0, 4},
+            { 3, 0, 0, 0, 0, 0, 0, 0}
         };
 
         public Board()
@@ -33,6 +33,11 @@ namespace draughts_ai
             Matrix = Test;
         }
 
+        public Board(Board copy)
+        {
+            Matrix = (int[,])copy.Matrix.Clone();
+        }
+        
         //agent index 0 - Red
         //agent index 1 - Black
         // KeyValuePair 1)steps 2)amount of beaten men
@@ -190,11 +195,6 @@ namespace draughts_ai
             return ids.Where(el => el == Matrix[y, x]).ToArray().Length != 0;
         }
 
-        public void DefaultBoardSet()
-        {
-
-        }
-
         public KeyValuePair<int, int> ConvertFromPDN(int n)
         {
             return new KeyValuePair<int, int>((n - 1) / 4, (((n - 1) * 2) % 8) + ((((n - 1) / 4) + 1) % 2));
@@ -203,6 +203,32 @@ namespace draughts_ai
         public int ConvertToPDN(int x, int y)
         {
             return x * 4 + y / 2 + 1;
+        }
+
+
+        public void ApplyStep(int[] steps)  // doesn't validate checkers rules, apply only valid steps!!!
+        {
+            List<KeyValuePair<int, int>> coords = new List<KeyValuePair<int, int>>();
+            for(int i = 0; i< steps.Length; i++)
+            {
+                coords.Add(ConvertFromPDN(steps[i]));
+            }
+
+            for(int i = 1; i < coords.Count; i++)
+            {
+                int elementIndex = Matrix[coords.ElementAt(i - 1).Value, coords.ElementAt(i - 1).Key];
+                Matrix[coords.ElementAt(i - 1).Value, coords.ElementAt(i - 1).Key] = 0;
+                Matrix[coords.ElementAt(i).Value, coords.ElementAt(i).Key] = elementIndex;
+
+                //in case of destroying enemy
+                int deltaX = coords.ElementAt(i).Key - coords.ElementAt(i - 1).Key;
+                int deltaY = coords.ElementAt(i).Value - coords.ElementAt(i - 1).Value;
+                if(Math.Abs(deltaX) == 2)
+                {
+                    KeyValuePair<int, int> destroyCoord = new KeyValuePair<int, int>(coords.ElementAt(i-1).Key + deltaX/2, coords.ElementAt(i - 1).Value + deltaY / 2);
+                    Matrix[destroyCoord.Value, destroyCoord.Key] = 0;
+                }
+            }
         }
 
         public void PrintBoard()
