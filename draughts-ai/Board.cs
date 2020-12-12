@@ -16,14 +16,26 @@ namespace draughts_ai
 
         public int[,] Test = new int[,]
         {
-            { 0, 0, 0, 0, 0, 0, 0, 2},
-            { 1, 0, 0, 0, 0, 0, 1, 0},
-            { 0, 2, 0, 0, 0, 0, 0, 0},
-            { 0, 0, 0, 0, 1, 0, 0, 0},
             { 0, 0, 0, 0, 0, 0, 0, 0},
             { 0, 0, 0, 0, 0, 0, 0, 0},
-            { 0, 0, 0, 0, 0, 0, 0, 4},
-            { 3, 0, 0, 0, 0, 0, 0, 0}
+            { 0, 0, 0, 2, 0, 2, 0, 0},
+            { 0, 0, 3, 0, 0, 0, 0, 0},
+            { 0, 0, 0, 2, 0, 0, 0, 0},
+            { 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0, 2, 0, 2, 0, 0, 0, 0},
+            { 0, 0, 0, 0, 0, 0, 0, 0}
+        };
+
+        public int[,] DefaultTest = new int[,]
+        {
+            { 0, 1, 0, 0, 0, 2, 0, 2},
+            { 1, 0, 1, 0, 0, 0, 2, 0},
+            { 0, 1, 0, 0, 0, 2, 0, 2},
+            { 1, 0, 1, 0, 0, 0, 2, 0},
+            { 0, 1, 0, 0, 0, 2, 0, 2},
+            { 1, 0, 1, 0, 0, 0, 2, 0},
+            { 0, 1, 0, 0, 0, 2, 0, 2},
+            { 1, 0, 1, 0, 0, 0, 2, 0}
         };
 
         public Board()
@@ -241,6 +253,32 @@ namespace draughts_ai
                 }
                 Console.WriteLine();
             }
+        }
+
+
+        public int SuperiorityForAgent(int agentIndex)
+        {
+            if(agentIndex == 0)
+            {
+                return PlayerScore(0) - PlayerScore(1);
+            }
+            return PlayerScore(1) - PlayerScore(0);
+        }
+
+        public int PlayerScore(int agentIndex)  //man: +1 , king: +2
+        {
+            int score = 0;
+            int manId = agentIndex == 0 ? 1 : 2;
+            int kingId = agentIndex == 0 ? 3 : 4;
+            for (int i = 0; i < Matrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < Matrix.GetLength(1); j++)
+                {
+                    if (Matrix[i, j] == manId) score += 1;
+                    if (Matrix[i, j] == kingId) score += 2;
+                }
+            }
+            return score;
         }
     }
 }

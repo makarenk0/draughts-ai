@@ -23,9 +23,9 @@ namespace draughts_ai
             Board b = new Board();
             //b.Matrix = ReqExecutor.GetBoardState();
             b.PrintBoard();
-            b.ApplyStep(new int[] { 32, 27});
-            Console.WriteLine();
-            b.PrintBoard();
+           
+            MinimaxTree tree = new MinimaxTree(b, "RED");
+            //Console.WriteLine(b.PlayerScore(0));
             //List<KeyValuePair<int[], int>> steps = b.GetPossibleSteps(0);
             while (Running)
             {
