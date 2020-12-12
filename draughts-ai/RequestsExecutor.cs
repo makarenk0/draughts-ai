@@ -44,13 +44,19 @@ namespace draughts_ai
         }
 
 
-        public int[,] GetBoardState()
+        public KeyValuePair<bool, int[,]> GetBoardState()
         {
             String board = GetAsync(_getGameInfoRequest).Result;
 
             using JsonDocument parsedResult = JsonDocument.Parse(board);
-            JsonElement boardRaw = parsedResult.RootElement.GetProperty("data").GetProperty("board");
+            
+            //in case not my turn
+            if(parsedResult.RootElement.GetProperty("data").GetProperty("whose_turn").GetRawText().Trim('\"') != MyColor)
+            {
+                return new KeyValuePair<bool, int[,]>(false, null);
+            }
 
+            JsonElement boardRaw = parsedResult.RootElement.GetProperty("data").GetProperty("board");
             int[,] result = new int[8, 8];
             for (int i = 0; i < boardRaw.GetArrayLength(); i++)
             {
@@ -61,7 +67,7 @@ namespace draughts_ai
                 result[(y * 2) + (1 * ((x + 1) % 2)), x] = "RED" == color ? (king ? 3 : 1) : (king ? 4 : 2);
             }
 
-            return result;
+            return new KeyValuePair<bool, int[,]>(true, result);
         }
 
 
@@ -103,7 +109,7 @@ namespace draughts_ai
             client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _token);
         }
 
-        private void MakeMove(string move)
+        public void MakeMove(string move)
         {
             
             HttpContent httpContent = new StringContent(String.Concat("{\"name\": \"Make move\",", "\"move\": ", move, "}"));

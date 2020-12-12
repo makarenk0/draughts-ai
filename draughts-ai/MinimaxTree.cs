@@ -13,12 +13,19 @@ namespace draughts_ai
         private String MyColor { get; set; }
         private const int _treeDepth = 1;   //make time dependence
         private Node Root { get; set; }
+        public int[] Answer { get; set; }
+
+        private bool FirstPossibleVariants { get; set; }
+        private bool MustBeat { get; set; }
+
 
         public MinimaxTree(Board board, String color)
         {
             GameBoard = board;
             MyColor = color;
             NodesStack = new Stack<Node>();
+            FirstPossibleVariants = true;
+            MustBeat = false;
             ConstructTree();
         }
 
@@ -36,6 +43,7 @@ namespace draughts_ai
                     if (peek.NextNodes.Count == 0)  //means that not built yet
                     {
                         BuildNextNodes(peek);
+                        if (MustBeat) break;
                     }
                     else
                     {
@@ -63,11 +71,12 @@ namespace draughts_ai
             }
             //TO DO: debug
             NodesStack.Peek().Benefit = FindMaximumBenefit(Root);  //last action for root (root is always max agent)
-            Root.PrintPretty("", true, "");
+            //Root.PrintPretty("", true, "");
 
 
-            Node step = Root.NextNodes.Find(x => x.Key.Benefit == Root.Benefit).Key;
-            step.State.PrintBoard();
+            KeyValuePair<Node, int[]> pair = Root.NextNodes.Find(x => x.Key.Benefit == Root.Benefit);
+            Answer = pair.Value;
+            //step.State.PrintBoard();
         }
 
         private int FindMinimumBenefit(Node peek)
@@ -84,8 +93,16 @@ namespace draughts_ai
         {
             int nextAgent = peek.AgentIndex == 0 ? 1 : 0;
             List<KeyValuePair<int[], int>> nextSteps = peek.State.GetPossibleSteps(nextAgent == 0 ? (MyColor == "RED" ? 1 : 0) : (MyColor == "RED" ? 0 : 1));
-         
-            if(nextSteps.Count == 0)  // if there are no options to go
+
+
+            if (FirstPossibleVariants && nextSteps.Exists(x => x.Value != 0))
+            {
+                MustBeat = true;
+            }
+            FirstPossibleVariants = false;
+
+
+            if (nextSteps.Count == 0)  // if there are no options to go
             {
                 ComputeBenefitAndFinalize(peek);
             }
