@@ -24,7 +24,7 @@ namespace draughts_ai
             //EventLoop();
 
             TimerCallback timeCB = new TimerCallback(timer_Tick);
-            timer = new Timer(timeCB, null, 0, 1000);
+            timer = new Timer(timeCB, null, 0, 500);
 
 
             while (Running)
@@ -43,9 +43,18 @@ namespace draughts_ai
 
                 Board freshData = new Board();
                 freshData.Matrix = tryRequest.Value;
-                MinimaxTree tree = new MinimaxTree(freshData, ReqExecutor.MyColor, ReqExecutor.AvailableTime);
-                String move = String.Join(", ", tree.Answer);
-                ReqExecutor.MakeMove(String.Concat("[", move, "]"));
+
+
+                MinimaxTree tree = new MinimaxTree(freshData, ReqExecutor.MyColor);
+                
+                
+                for(int i = 1; i < tree.Answer.Length; i++)
+                {
+                    String move = String.Concat("[", tree.Answer[i-1], ", ", tree.Answer[i], "]");
+                    ReqExecutor.MakeMove(move);
+                    Thread.Sleep(50);
+                }
+                
 
                 SearchingAnswer = false;
             }
@@ -62,6 +71,7 @@ namespace draughts_ai
             b.PrintBoard();
 
             MinimaxTree tree = new MinimaxTree(b, "RED");
+            String move = String.Join(", ", tree.Answer);
             //Console.WriteLine(b.PlayerScore(0));
             //List<KeyValuePair<int[], int>> steps = b.GetPossibleSteps(0);
             while (Running)

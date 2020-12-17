@@ -11,16 +11,18 @@ namespace draughts_ai
         public Board GameBoard { get; set; }
         private Stack<Node> NodesStack { get; set; }
         private String MyColor { get; set; }
-        private const int _treeDepth = 2;   //make time dependence
+        private const int _minTreeDepth = 2;   //min tree depth
         private Node Root { get; set; }
         public byte[] Answer { get; set; }
 
         private bool FirstPossibleVariants { get; set; }
         private bool MustBeat { get; set; }
+        public int TreeDepth { get; set; }
 
 
-        public MinimaxTree(Board board, String color, double availableTime)
+        public MinimaxTree(Board board, String color)
         {
+            TreeDepth = _minTreeDepth;
             GameBoard = board;
             MyColor = color;
             NodesStack = new Stack<Node>();
@@ -62,24 +64,64 @@ namespace draughts_ai
                 {
                     //Console.WriteLine();
 
-                    if(peek.NextNodes.Count != 0)
-                    {
-                        peek.Benefit = peek.AgentIndex == 0 ? FindMaximumBenefit(peek) : FindMinimumBenefit(peek);
-                    }
+                    //if(peek.NextNodes.Count != 0)
+                    //{
+                    //    peek.Benefit = peek.AgentIndex == 0 ? FindMaximumBenefit(peek) : FindMinimumBenefit(peek);
+                    //}
+
                     NodesStack.Pop();
                 }
             }
             //TO DO: debug
-            NodesStack.Peek().Benefit = FindMaximumBenefit(Root);  //last action for root (root is always max agent)
-            
+            //NodesStack.Peek().Benefit = FindMaximumBenefit(Root);  //last action for root (root is always max agent)
 
+            if (MustBeat)
+            {
+                NodesStack.Peek().Benefit = FindMaximumBenefit(Root);
+            }
+            else
+            {
+                ComputeAnswer();
+            }
 
             KeyValuePair<Node, byte[]> pair = Root.NextNodes.Find(x => x.Key.Benefit == Root.Benefit);
             Answer = pair.Value;
+
             //step.State.PrintBoard();
 
             //Root.PrintPretty("", true, "");
         }
+
+        private void ComputeAnswer()
+        {
+            while (!(NodesStack.Count == 1 && NodesStack.Peek().AllNextVisited()))
+            {
+                Node peek = NodesStack.Peek();
+                if (peek.AllNextVisited())
+                {
+                    peek.Benefit = peek.AgentIndex == 0 ? FindMaximumBenefit(peek) : FindMinimumBenefit(peek);
+                    peek.Full = true;
+                    NodesStack.Pop();
+                }
+                else
+                {
+                    if (peek.NextNodes.Count == 0)
+                    {
+                        NodesStack.Pop();
+                        peek.Full = true;
+                    }
+                    else
+                    {
+                        Node next = peek.FindFirstEmpty();
+                        NodesStack.Push(next);
+                    }
+                }
+            }
+            NodesStack.Peek().Benefit = FindMaximumBenefit(Root);
+
+            
+        }
+
 
         private sbyte FindMinimumBenefit(Node peek)
         {
@@ -114,9 +156,10 @@ namespace draughts_ai
                 {
                     Board afterStep = new Board(peek.State);
                     afterStep.ApplyStep(step.Key);
+
                     Node next = new Node(nextAgent, afterStep);
 
-                    if (NodesStack.Count == (_treeDepth * 2) + 1)
+                    if (NodesStack.Count == (TreeDepth * 2) + 1 || MustBeat)
                     {
                         ComputeBenefitAndFinalize(next);
                     }

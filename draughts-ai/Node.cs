@@ -34,6 +34,13 @@ namespace draughts_ai
                     return false;
                 }
             }
+
+            //prepare next nodes to compute answer
+            foreach (var node in NextNodes)
+            {
+                node.Key.Full = false;
+            }
+
             return true;
         }
 
