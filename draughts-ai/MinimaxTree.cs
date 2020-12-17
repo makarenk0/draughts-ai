@@ -11,15 +11,15 @@ namespace draughts_ai
         public Board GameBoard { get; set; }
         private Stack<Node> NodesStack { get; set; }
         private String MyColor { get; set; }
-        private const int _treeDepth = 1;   //make time dependence
+        private const int _treeDepth = 2;   //make time dependence
         private Node Root { get; set; }
-        public int[] Answer { get; set; }
+        public byte[] Answer { get; set; }
 
         private bool FirstPossibleVariants { get; set; }
         private bool MustBeat { get; set; }
 
 
-        public MinimaxTree(Board board, String color)
+        public MinimaxTree(Board board, String color, double availableTime)
         {
             GameBoard = board;
             MyColor = color;
@@ -71,28 +71,30 @@ namespace draughts_ai
             }
             //TO DO: debug
             NodesStack.Peek().Benefit = FindMaximumBenefit(Root);  //last action for root (root is always max agent)
-            //Root.PrintPretty("", true, "");
+            
 
 
-            KeyValuePair<Node, int[]> pair = Root.NextNodes.Find(x => x.Key.Benefit == Root.Benefit);
+            KeyValuePair<Node, byte[]> pair = Root.NextNodes.Find(x => x.Key.Benefit == Root.Benefit);
             Answer = pair.Value;
             //step.State.PrintBoard();
+
+            //Root.PrintPretty("", true, "");
         }
 
-        private int FindMinimumBenefit(Node peek)
+        private sbyte FindMinimumBenefit(Node peek)
         {
             return peek.NextNodes.Min(x => x.Key.Benefit);
         }
 
-        private int FindMaximumBenefit(Node peek)
+        private sbyte FindMaximumBenefit(Node peek)
         {
             return peek.NextNodes.Max(x => x.Key.Benefit);
         }
 
         private void BuildNextNodes(Node peek)
         {
-            int nextAgent = peek.AgentIndex == 0 ? 1 : 0;
-            List<KeyValuePair<int[], int>> nextSteps = peek.State.GetPossibleSteps(nextAgent == 0 ? (MyColor == "RED" ? 1 : 0) : (MyColor == "RED" ? 0 : 1));
+            byte nextAgent = (byte)(peek.AgentIndex == 0 ? 1 : 0);
+            List<KeyValuePair<byte[], byte>> nextSteps = peek.State.GetPossibleSteps(nextAgent == 0 ? (MyColor == "RED" ? (byte)1 : (byte)0) : (MyColor == "RED" ? (byte)0 : (byte)1));
 
 
             if (FirstPossibleVariants && nextSteps.Exists(x => x.Value != 0))
@@ -119,7 +121,7 @@ namespace draughts_ai
                         ComputeBenefitAndFinalize(next);
                     }
 
-                    peek.NextNodes.Add(new KeyValuePair<Node, int[]>(next, step.Key));
+                    peek.NextNodes.Add(new KeyValuePair<Node, byte[]>(next, step.Key));
                 }
             }
             

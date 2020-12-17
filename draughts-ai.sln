@@ -3,18 +3,24 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "draughts-ai", "draughts-ai\draughts-ai.csproj", "{ABCCB931-57E1-4724-9B87-3776CAE309E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "draughts-ai", "draughts-ai\draughts-ai.csproj", "{ABCCB931-57E1-4724-9B87-3776CAE309E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{ABCCB931-57E1-4724-9B87-3776CAE309E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ABCCB931-57E1-4724-9B87-3776CAE309E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABCCB931-57E1-4724-9B87-3776CAE309E5}.Debug|x64.ActiveCfg = Debug|x64
+		{ABCCB931-57E1-4724-9B87-3776CAE309E5}.Debug|x64.Build.0 = Debug|x64
 		{ABCCB931-57E1-4724-9B87-3776CAE309E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABCCB931-57E1-4724-9B87-3776CAE309E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABCCB931-57E1-4724-9B87-3776CAE309E5}.Release|x64.ActiveCfg = Release|x64
+		{ABCCB931-57E1-4724-9B87-3776CAE309E5}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

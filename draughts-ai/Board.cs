@@ -12,9 +12,9 @@ namespace draughts_ai
         // 2 - black man
         // 3 - red king
         // 4 - black king
-        public int[,] Matrix { get; set; }
+        public byte[,] Matrix { get; set; }
 
-        public int[,] Test = new int[,]
+        public static byte[,] Test = new byte[,]
         {
             { 0, 0, 0, 0, 0, 0, 0, 0},
             { 0, 0, 0, 0, 0, 0, 0, 0},
@@ -26,7 +26,7 @@ namespace draughts_ai
             { 0, 0, 0, 0, 0, 0, 0, 0}
         };
 
-        public int[,] DefaultTest = new int[,]
+        public static byte[,] DefaultTest = new byte[,]
         {
             { 0, 1, 0, 0, 0, 2, 0, 2},
             { 1, 0, 1, 0, 0, 0, 2, 0},
@@ -40,30 +40,30 @@ namespace draughts_ai
 
         public Board()
         {
-            Matrix = new int[8, 8];
+            Matrix = new byte[8, 8];
 
-            Matrix = Test;
+            Matrix = DefaultTest;
         }
 
         public Board(Board copy)
         {
-            Matrix = (int[,])copy.Matrix.Clone();
+            Matrix = (byte[,])copy.Matrix.Clone();
         }
         
         //agent index 0 - Red
         //agent index 1 - Black
         // KeyValuePair 1)steps 2)amount of beaten men
-        public List<KeyValuePair<int[], int>> GetPossibleSteps(int agentIndex)
+        public List<KeyValuePair<byte[], byte>> GetPossibleSteps(byte agentIndex)
         {
-            List<KeyValuePair<int[], int>> result = new List<KeyValuePair<int[], int>>();
+            List<KeyValuePair<byte[], byte>> result = new List<KeyValuePair<byte[], byte>>();
             result.AddRange(BeatingSteps(agentIndex));
             result.AddRange(SimpleSteps(agentIndex));
             return result;
         }
 
-        private List<KeyValuePair<int[], int>> SimpleSteps(int agentIndex)
+        private List<KeyValuePair<byte[], byte>> SimpleSteps(int agentIndex)
         {
-            List<KeyValuePair<int[], int>> steps = new List<KeyValuePair<int[], int>>();
+            List<KeyValuePair<byte[], byte>> steps = new List<KeyValuePair<byte[], byte>>();
             int manId = agentIndex == 0 ? 1 : 2;
             int kingId = agentIndex == 0 ? 3 : 4;
 
@@ -73,10 +73,10 @@ namespace draughts_ai
                 {
                     if(Matrix[i, j] == manId)
                     {
-                        steps.Add(agentIndex == 0 && EmptyAndExist(j + 1, i - 1) ? new KeyValuePair<int[], int>(new int[] { ConvertToPDN(j, i), ConvertToPDN(j + 1, i - 1) }, 0) : new KeyValuePair<int[], int>(new int[0], 0));
-                        steps.Add(agentIndex == 0 && EmptyAndExist(j + 1, i + 1) ? new KeyValuePair<int[], int>(new int[] { ConvertToPDN(j, i), ConvertToPDN(j + 1, i + 1) }, 0) : new KeyValuePair<int[], int>(new int[0], 0));
-                        steps.Add(agentIndex == 1 && EmptyAndExist(j - 1, i - 1) ? new KeyValuePair<int[], int>(new int[] { ConvertToPDN(j, i), ConvertToPDN(j - 1, i - 1) }, 0) : new KeyValuePair<int[], int>(new int[0], 0));
-                        steps.Add(agentIndex == 1 && EmptyAndExist(j - 1, i + 1) ? new KeyValuePair<int[], int>(new int[] { ConvertToPDN(j, i), ConvertToPDN(j - 1, i + 1) }, 0) : new KeyValuePair<int[], int>(new int[0], 0));
+                        steps.Add(agentIndex == 0 && EmptyAndExist(j + 1, i - 1) ? new KeyValuePair<byte[], byte>(new byte[] { ConvertToPDN(j, i), ConvertToPDN(j + 1, i - 1) }, 0) : new KeyValuePair<byte[], byte>(new byte[0], 0));
+                        steps.Add(agentIndex == 0 && EmptyAndExist(j + 1, i + 1) ? new KeyValuePair<byte[], byte>(new byte[] { ConvertToPDN(j, i), ConvertToPDN(j + 1, i + 1) }, 0) : new KeyValuePair<byte[], byte>(new byte[0], 0));
+                        steps.Add(agentIndex == 1 && EmptyAndExist(j - 1, i - 1) ? new KeyValuePair<byte[], byte>(new byte[] { ConvertToPDN(j, i), ConvertToPDN(j - 1, i - 1) }, 0) : new KeyValuePair<byte[], byte>(new byte[0], 0));
+                        steps.Add(agentIndex == 1 && EmptyAndExist(j - 1, i + 1) ? new KeyValuePair<byte[], byte>(new byte[] { ConvertToPDN(j, i), ConvertToPDN(j - 1, i + 1) }, 0) : new KeyValuePair<byte[], byte>(new byte[0], 0));
                     }
                     else if(Matrix[i, j] == kingId)
                     {
@@ -88,34 +88,34 @@ namespace draughts_ai
             return steps.Where(x => x.Key.Length != 0).ToList();
         }
 
-        private List<KeyValuePair<int[], int>> BeatingSteps(int agentIndex)
+        private List<KeyValuePair<byte[], byte>> BeatingSteps(byte agentIndex)
         {
             int manId = agentIndex == 0 ? 1 : 2;
             int kingId = agentIndex == 0 ? 3 : 4;
-            List<KeyValuePair<int[], int>> result = new List<KeyValuePair<int[], int>>();
+            List<KeyValuePair<byte[], byte>> result = new List<KeyValuePair<byte[], byte>>();
             for (int i = 0; i < Matrix.GetLength(0); i++)
             {
                 for (int j = 0; j < Matrix.GetLength(1); j++)
                 {
                     if(Matrix[i, j] == manId)
                     {
-                        result.AddRange(BeatFromCell(agentIndex, j, i, 0, new int[1] { ConvertToPDN(j, i)}));
+                        result.AddRange(BeatFromCell(agentIndex, j, i, 0, new byte[1] { ConvertToPDN(j, i)}));
                     }
                     else if(Matrix[i, j] == kingId)
                     {
-                        result.AddRange(BeatFromCell(agentIndex, j, i, 0, new int[1] { ConvertToPDN(j, i)}, true));
+                        result.AddRange(BeatFromCell(agentIndex, j, i, 0, new byte[1] { ConvertToPDN(j, i)}, true));
                     }
                 }
             }
             return result;
         }
 
-        private List<KeyValuePair<int[], int>> BeatFromCell(int agentIndex, int x, int y, int alreadyBeaten, int[] path, bool isKing = false)
+        private List<KeyValuePair<byte[], byte>> BeatFromCell(byte agentIndex, int x, int y, byte alreadyBeaten, byte[] path, bool isKing = false)
         {
-            int[] toBeat = new int[] { agentIndex == 1 ? 1 : 2, agentIndex == 1 ? 3 : 4 };
-            int[] tryFuther = new int[path.Length + 1];
+            byte[] toBeat = new byte[] { agentIndex == 1 ? (byte)1 : (byte)2, agentIndex == 1 ? (byte)3 : (byte)4 };
+            byte[] tryFuther = new byte[path.Length + 1];
             Array.Copy(path, 0, tryFuther, 0, path.Length);
-            List<KeyValuePair<int[], int>> steps = new List<KeyValuePair<int[], int>>();
+            List<KeyValuePair<byte[], byte>> steps = new List<KeyValuePair<byte[], byte>>();
             if (isKing)
             {
                 int[] arr = new int[] { -1, 1 };
@@ -130,8 +130,8 @@ namespace draughts_ai
                     if (EmptyAndExist(x + (directionX * 2), y + (directionY * 2)) && IsPresent(x + directionX, y + directionY, toBeat))
                     {
                         tryFuther[path.Length] = ConvertToPDN(x + (directionX * 2), y + (directionY * 2));
-                        steps.Add(new KeyValuePair<int[], int>((int[])tryFuther.Clone(), alreadyBeaten + 1));
-                        steps.AddRange(BeatFromCell(agentIndex, x + (directionX * 2), y + (directionY * 2), alreadyBeaten + 1, tryFuther, isKing));
+                        steps.Add(new KeyValuePair<byte[], byte>((byte[])tryFuther.Clone(), (byte)(alreadyBeaten + 1)));
+                        steps.AddRange(BeatFromCell(agentIndex, x + (directionX * 2), y + (directionY * 2), (byte)(alreadyBeaten + 1), tryFuther, isKing));
                     }
 
                 }
@@ -149,8 +149,8 @@ namespace draughts_ai
                     if (EmptyAndExist(x + (directionX * 2), y + (directionY * 2)) && IsPresent(x + directionX, y + directionY, toBeat))
                     {
                         tryFuther[path.Length] = ConvertToPDN(x + (directionX * 2), y + (directionY * 2));
-                        steps.Add(new KeyValuePair<int[], int>((int[])tryFuther.Clone(), alreadyBeaten + 1));
-                        steps.AddRange(BeatFromCell(agentIndex, x + (directionX * 2), y + (directionY * 2), alreadyBeaten + 1, tryFuther));
+                        steps.Add(new KeyValuePair<byte[], byte>((byte[])tryFuther.Clone(), (byte)(alreadyBeaten + 1)));
+                        steps.AddRange(BeatFromCell(agentIndex, x + (directionX * 2), y + (directionY * 2), (byte)(alreadyBeaten + 1), tryFuther));
                     }
 
                 }
@@ -158,16 +158,16 @@ namespace draughts_ai
             return steps;
         }
 
-        private List<KeyValuePair<int[], int>> KingSimpleMove(int x, int y)
+        private List<KeyValuePair<byte[], byte>> KingSimpleMove(int x, int y)
         {
-            List<KeyValuePair<int[], int>> moves = new List<KeyValuePair<int[], int>>();
+            List<KeyValuePair<byte[], byte>> moves = new List<KeyValuePair<byte[], byte>>();
             int[] arr = new int[] { -1, 1 };
             for (int i = 0; i < 4; i++) 
             {
                 //init
                 int startX = x + arr[i % 2], startY = y + arr[i / 2];
                 if (EmptyAndExist(startX, startY)) {
-                    moves.Add(new KeyValuePair<int[], int>(new int[] { ConvertToPDN(x, y), ConvertToPDN(startX, startY) }, 0));
+                    moves.Add(new KeyValuePair<byte[], byte>(new byte[] { ConvertToPDN(x, y), ConvertToPDN(startX, startY) }, 0));
 
                     ////first step  TO DO: reduce dublicating code   // if you want standart draughts with king moving along digonal unlimitly uncomment this code
                     //startX += arr[i % 2];
@@ -203,7 +203,7 @@ namespace draughts_ai
             return false;
         }
 
-        private bool IsPresent(int x, int y, int[] ids)
+        private bool IsPresent(int x, int y, byte[] ids)
         {
             return ids.Where(el => el == Matrix[y, x]).ToArray().Length != 0;
         }
@@ -213,13 +213,13 @@ namespace draughts_ai
             return new KeyValuePair<int, int>((n - 1) / 4, (((n - 1) * 2) % 8) + ((((n - 1) / 4) + 1) % 2));
         }
 
-        public int ConvertToPDN(int x, int y)
+        public byte ConvertToPDN(int x, int y)
         {
-            return x * 4 + y / 2 + 1;
+            return (byte) (x * 4 + y / 2 + 1);
         }
 
 
-        public void ApplyStep(int[] steps)  // doesn't validate checkers rules, apply only valid steps!!!
+        public void ApplyStep(byte[] steps)  // doesn't validate checkers rules, apply only valid steps!!!
         {
             List<KeyValuePair<int, int>> coords = new List<KeyValuePair<int, int>>();
             for(int i = 0; i< steps.Length; i++)
@@ -229,7 +229,7 @@ namespace draughts_ai
 
             for(int i = 1; i < coords.Count; i++)
             {
-                int elementIndex = Matrix[coords.ElementAt(i - 1).Value, coords.ElementAt(i - 1).Key];
+                byte elementIndex = Matrix[coords.ElementAt(i - 1).Value, coords.ElementAt(i - 1).Key];
                 Matrix[coords.ElementAt(i - 1).Value, coords.ElementAt(i - 1).Key] = 0;
                 Matrix[coords.ElementAt(i).Value, coords.ElementAt(i).Key] = elementIndex;
 
@@ -257,26 +257,28 @@ namespace draughts_ai
         }
 
 
-        public int SuperiorityForAgent(int agentIndex)
+        public sbyte SuperiorityForAgent(byte agentIndex)
         {
             if(agentIndex == 0)
             {
-                return PlayerScore(0) - PlayerScore(1);
+                return (sbyte)(PlayerScore(0) - PlayerScore(1));
             }
-            return PlayerScore(1) - PlayerScore(0);
+            return (sbyte)(PlayerScore(1) - PlayerScore(0));
         }
 
-        public int PlayerScore(int agentIndex)  //man: +1 , king: +2
+        public sbyte PlayerScore(byte agentIndex)  //man: +1 , king: +2
         {
-            int score = 0;
+            sbyte score = 0;
             int manId = agentIndex == 0 ? 1 : 2;
             int kingId = agentIndex == 0 ? 3 : 4;
             for (int i = 0; i < Matrix.GetLength(0); i++)
             {
                 for (int j = 0; j < Matrix.GetLength(1); j++)
                 {
-                    if (Matrix[i, j] == manId) score += 1;
-                    if (Matrix[i, j] == kingId) score += 2;
+                    if (Matrix[i, j] == manId) 
+                        score += 1;
+                    if (Matrix[i, j] == kingId) 
+                        score += 2;
                 }
             }
             return score;

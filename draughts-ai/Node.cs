@@ -6,17 +6,17 @@ namespace draughts_ai
 {
     class Node
     {
-        public int AgentIndex { get; set; }  //0 player, 1 - enemy
-        public List<KeyValuePair<Node, int[]>> NextNodes { get; set; }
-        public int Benefit { get; set; }
+        public byte AgentIndex { get; set; }  //0 player, 1 - enemy
+        public List<KeyValuePair<Node, byte[]>> NextNodes { get; set; }
+        public sbyte Benefit { get; set; }
         public bool Full { get; set; }
 
         public Board State { get; set; }
 
-        public Node(int agentIndex, Board state)
+        public Node(byte agentIndex, Board state)
         {
             AgentIndex = agentIndex;
-            NextNodes = new List<KeyValuePair<Node, int[]>>();
+            NextNodes = new List<KeyValuePair<Node, byte[]>>();
             State = new Board(state);
         }
 

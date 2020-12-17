@@ -27,6 +27,7 @@ namespace draughts_ai
         private String _token;
 
         public string MyColor { get => _myColor; set => _myColor = value; }
+        public double AvailableTime { get; set; }
 
         public enum DraughtColor
         {
@@ -44,7 +45,7 @@ namespace draughts_ai
         }
 
 
-        public KeyValuePair<int, int[,]> GetBoardState()
+        public KeyValuePair<int, byte[,]> GetBoardState()
         {
             String board = GetAsync(_getGameInfoRequest).Result;
 
@@ -53,26 +54,27 @@ namespace draughts_ai
             //in case game is over
             if (parsedResult.RootElement.GetProperty("data").GetProperty("status").GetRawText().Trim('\"') == "Game is over")
             {
-                return new KeyValuePair<int, int[,]>(2, null);
+                return new KeyValuePair<int, byte[,]>(2, null);
             }
             //in case not my turn
             if (parsedResult.RootElement.GetProperty("data").GetProperty("whose_turn").GetRawText().Trim('\"') != MyColor)
             {
-                return new KeyValuePair<int, int[,]>(0, null);
+                return new KeyValuePair<int, byte[,]>(0, null);
             }
 
             JsonElement boardRaw = parsedResult.RootElement.GetProperty("data").GetProperty("board");
-            int[,] result = new int[8, 8];
+            byte[,] result = new byte[8, 8];
             for (int i = 0; i < boardRaw.GetArrayLength(); i++)
             {
                 String color = boardRaw[i].GetProperty("color").GetRawText().Trim('\"');
                 bool king = boardRaw[i].GetProperty("king").GetRawText() == "true" ? true : false;
                 int x = (int)UInt32.Parse(boardRaw[i].GetProperty("row").GetRawText());
                 int y = (int)UInt32.Parse(boardRaw[i].GetProperty("column").GetRawText());
-                result[(y * 2) + (1 * ((x + 1) % 2)), x] = "RED" == color ? (king ? 3 : 1) : (king ? 4 : 2);
+                result[(y * 2) + (1 * ((x + 1) % 2)), x] = "RED" == color ? (king ? (byte)3 : (byte)1) : (king ? (byte)4 : (byte)2);
             }
+            AvailableTime = parsedResult.RootElement.GetProperty("data").GetProperty("available_time").GetDouble();
 
-            return new KeyValuePair<int, int[,]>(1, result);
+            return new KeyValuePair<int, byte[,]>(1, result);
         }
 
 

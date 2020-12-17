@@ -6,7 +6,7 @@
 		},
 		{
 			"name": "Connect to the game",
-			"url": "http://192.168.1.19:8081/game?team_name=Loom"
+			"url": "http://192.168.1.19:8081/game?team_name=Maestro"
 		},
 		{
 			"name": "Make move",
