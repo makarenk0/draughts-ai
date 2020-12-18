@@ -16,7 +16,7 @@ namespace draughts_ai
         public byte[] Answer { get; set; }
 
         private bool FirstPossibleVariants { get; set; }
-        private bool MustBeat { get; set; }
+        public bool MustBeat { get; set; }
         public int TreeDepth { get; set; }
 
         public bool Computing { get; set; }
@@ -30,7 +30,7 @@ namespace draughts_ai
             NodesStack = new Stack<Node>();
             FirstPossibleVariants = true;
             MustBeat = false;
-            Console.WriteLine("New step computing start:\n");
+            Console.WriteLine("New step computing start:");
 
             Root = new Node(0, GameBoard);
             NodesStack.Push(Root);
@@ -67,25 +67,19 @@ namespace draughts_ai
                 }
                 else  // visited all next nodes -> go back
                 {
-                    //Console.WriteLine();
-
-                    //if(peek.NextNodes.Count != 0)
-                    //{
-                    //    peek.Benefit = peek.AgentIndex == 0 ? FindMaximumBenefit(peek) : FindMinimumBenefit(peek);
-                    //}
-
                     NodesStack.Pop();
                     peek.ResetNextNodes();
                 }
             }
             Root.ResetNextNodes();
-            //NodesStack.Peek().Benefit = FindMaximumBenefit(Root);  //last action for root (root is always max agent)
+           
 
 
             if (Computing)
             {
                 if (MustBeat)
                 {
+                    Console.Write("Must beat step (depth 1)");
                     NodesStack.Peek().Benefit = FindMaximumBenefit(Root);
                 }
                 else
@@ -130,9 +124,7 @@ namespace draughts_ai
             NodesStack.Peek().Benefit = FindMaximumBenefit(Root);
             Root.ResetNextNodes();
             //logging tree depth
-            Console.Write(String.Concat("Try depth: ", TreeDepth, ", "));
-
-
+            Console.Write(String.Concat("Try depth: ", TreeDepth * 2 + 1, ", "));
         }
 
 

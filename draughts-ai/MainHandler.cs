@@ -22,7 +22,7 @@ namespace draughts_ai
             Running = true;
             SearchingAnswer = false;
 
-            //EventLoop();
+            //LocalTest();
 
             TimerCallback timeCB = new TimerCallback(timer_Tick);
             timer = new Timer(timeCB, null, 0, 500);
@@ -57,14 +57,17 @@ namespace draughts_ai
                         Thread.Sleep(50);
                     }
                     SearchingAnswer = false;
-                    Console.WriteLine();
+                    Console.WriteLine('\n');
                 });
 
                 tree = new MinimaxTree(freshData, ReqExecutor.MyColor);
                 while (SearchingAnswer)
                 {
-                    tree.TreeDepth += 1;
-                    tree.ConstructTree();
+                    if (!tree.MustBeat)
+                    {
+                        tree.TreeDepth += 1;
+                        tree.ConstructTree();
+                    }   
                 }
                 tree = null;
                 GC.Collect();  //Garbage collector forcing 
@@ -75,7 +78,7 @@ namespace draughts_ai
             }
         }
 
-        private void EventLoop()
+        private void LocalTest()
         {
             Board b = new Board();
             //b.Matrix = ReqExecutor.GetBoardState();
@@ -87,7 +90,7 @@ namespace draughts_ai
             //List<KeyValuePair<int[], int>> steps = b.GetPossibleSteps(0);
             while (Running)
             {
-
+                Thread.Sleep(1000);
             }
 
         }
