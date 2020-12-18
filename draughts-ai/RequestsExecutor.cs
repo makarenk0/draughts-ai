@@ -107,13 +107,23 @@ namespace draughts_ai
         private void JoinTheGame()
         {
             HttpContent httpContent = new StringContent(_gameJoinRequestPattern.GetRawText());
-            String result = PostAsync(_joinGameRequest, httpContent).Result;
+            try
+            {
+                String result = PostAsync(_joinGameRequest, httpContent).Result;
 
-            using JsonDocument parsedResult = JsonDocument.Parse(result);
-            _token = parsedResult.RootElement.GetProperty("data").GetProperty("token").GetRawText().Trim('\"');
-            MyColor = parsedResult.RootElement.GetProperty("data").GetProperty("color").GetRawText().Trim('\"');
+                using JsonDocument parsedResult = JsonDocument.Parse(result);
+                _token = parsedResult.RootElement.GetProperty("data").GetProperty("token").GetRawText().Trim('\"');
+                MyColor = parsedResult.RootElement.GetProperty("data").GetProperty("color").GetRawText().Trim('\"');
 
-            client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _token);
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _token);
+            }
+            catch (System.AggregateException)
+            {
+                Console.WriteLine("Specified host doesn't respond");
+                Console.WriteLine(String.Concat("Attempt to do: ", _joinGameRequest));
+                throw new Exception("Cant start the game");
+            }
+            
         }
 
         public void MakeMove(string move)

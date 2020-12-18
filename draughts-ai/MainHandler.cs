@@ -17,22 +17,30 @@ namespace draughts_ai
         public MainHandler(string filename_URLs)
         {
             Filename = filename_URLs;
-            ReqExecutor = new RequestsExecutor(Filename);
-            Console.WriteLine(String.Concat("My color: ", ReqExecutor.MyColor, "\n"));
-            Running = true;
-            SearchingAnswer = false;
-
-            //LocalTest();
-
-            TimerCallback timeCB = new TimerCallback(timer_Tick);
-            timer = new Timer(timeCB, null, 0, 500);
-
-
-            while (Running)
+            try
             {
-                Thread.Sleep(1000);
+                ReqExecutor = new RequestsExecutor(Filename);
+                Console.WriteLine(String.Concat("My color: ", ReqExecutor.MyColor, "\n"));
+                Running = true;
+                SearchingAnswer = false;
+
+
+                TimerCallback timeCB = new TimerCallback(timer_Tick);
+                timer = new Timer(timeCB, null, 0, 500);
+
+
+                while (Running)
+                {
+                    Thread.Sleep(1000);
+                }
+                timer.Dispose();
+                Console.WriteLine("End");
             }
-            timer.Dispose();
+            catch (Exception)
+            {
+                Console.WriteLine("Closing...");
+            }
+           
         }
 
         private void timer_Tick(object state)
