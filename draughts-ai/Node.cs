@@ -34,14 +34,16 @@ namespace draughts_ai
                     return false;
                 }
             }
-
-            //prepare next nodes to compute answer
-            foreach (var node in NextNodes)
-            {
-                node.Key.Full = false;
-            }
-
             return true;
+        }
+
+        public void ResetNextNodes()
+        {
+           
+            for (int i = 0; i < NextNodes.Count; i++)
+            {
+                NextNodes[i].Key.Full = false;
+            }
         }
 
         public Node FindFirstEmpty()
@@ -71,7 +73,7 @@ namespace draughts_ai
                 indent += "| ";
             }
 
-            Console.WriteLine(String.Concat("Ag: ", AgentIndex, " Steps:[", step, "]", " Benefit(", Benefit, ")"));
+            Console.WriteLine(String.Concat("Ag: ", AgentIndex, " Steps:[", step, "]", " Benefit(", Benefit, ")", " Full: ", Full));
 
             for (int i = 0; i < NextNodes.Count; i++)
                 NextNodes[i].Key.PrintPretty(indent, i == NextNodes.Count - 1, String.Join(',', NextNodes[i].Value));

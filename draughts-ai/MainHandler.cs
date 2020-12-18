@@ -18,6 +18,7 @@ namespace draughts_ai
         {
             Filename = filename_URLs;
             ReqExecutor = new RequestsExecutor(Filename);
+            Console.WriteLine(String.Concat("My color: ", ReqExecutor.MyColor, "\n"));
             Running = true;
             SearchingAnswer = false;
 
@@ -45,18 +46,28 @@ namespace draughts_ai
                 freshData.Matrix = tryRequest.Value;
 
 
-                MinimaxTree tree = new MinimaxTree(freshData, ReqExecutor.MyColor);
-                
-                
-                for(int i = 1; i < tree.Answer.Length; i++)
-                {
-                    String move = String.Concat("[", tree.Answer[i-1], ", ", tree.Answer[i], "]");
-                    ReqExecutor.MakeMove(move);
-                    Thread.Sleep(50);
-                }
-                
+                MinimaxTree tree = null;
 
-                SearchingAnswer = false;
+                Task.Delay((int)((ReqExecutor.AvailableTime * 1000) - 150)).ContinueWith(t => {
+                    tree.Computing = false;
+                    for (int i = 1; i < tree.Answer.Length; i++)
+                    {
+                        String move = String.Concat("[", tree.Answer[i - 1], ", ", tree.Answer[i], "]");
+                        ReqExecutor.MakeMove(move);
+                        Thread.Sleep(50);
+                    }
+                    SearchingAnswer = false;
+                    Console.WriteLine();
+                });
+
+                tree = new MinimaxTree(freshData, ReqExecutor.MyColor);
+                while (SearchingAnswer)
+                {
+                    tree.TreeDepth += 1;
+                    tree.ConstructTree();
+                }
+                tree = null;
+                GC.Collect();  //Garbage collector forcing 
             }
             else if(tryRequest.Key == 2)
             {

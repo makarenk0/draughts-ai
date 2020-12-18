@@ -19,25 +19,30 @@ namespace draughts_ai
         private bool MustBeat { get; set; }
         public int TreeDepth { get; set; }
 
+        public bool Computing { get; set; }
 
         public MinimaxTree(Board board, String color)
         {
             TreeDepth = _minTreeDepth;
+            Computing = true;
             GameBoard = board;
             MyColor = color;
             NodesStack = new Stack<Node>();
             FirstPossibleVariants = true;
             MustBeat = false;
-            ConstructTree();
-        }
+            Console.WriteLine("New step computing start:\n");
 
-
-        private void ConstructTree()
-        {
             Root = new Node(0, GameBoard);
             NodesStack.Push(Root);
 
-            while (!(NodesStack.Count == 1 && NodesStack.Peek().AllNextVisited()))
+            ConstructTree();  //default answer
+        }
+
+
+        public void ConstructTree()
+        {
+
+            while (!(NodesStack.Count == 1 && NodesStack.Peek().AllNextVisited()) && Computing)
             {
                 Node peek = NodesStack.Peek();
                 if (!peek.Full)
@@ -70,30 +75,34 @@ namespace draughts_ai
                     //}
 
                     NodesStack.Pop();
+                    peek.ResetNextNodes();
                 }
             }
-            //TO DO: debug
+            Root.ResetNextNodes();
             //NodesStack.Peek().Benefit = FindMaximumBenefit(Root);  //last action for root (root is always max agent)
 
-            if (MustBeat)
-            {
-                NodesStack.Peek().Benefit = FindMaximumBenefit(Root);
-            }
-            else
-            {
-                ComputeAnswer();
-            }
 
-            KeyValuePair<Node, byte[]> pair = Root.NextNodes.Find(x => x.Key.Benefit == Root.Benefit);
-            Answer = pair.Value;
+            if (Computing)
+            {
+                if (MustBeat)
+                {
+                    NodesStack.Peek().Benefit = FindMaximumBenefit(Root);
+                }
+                else
+                {
+                    ComputeAnswer();
+                }
 
+                KeyValuePair<Node, byte[]> pair = Root.NextNodes.Find(x => x.Key.Benefit == Root.Benefit);
+                Answer = pair.Value;
+            }
             //step.State.PrintBoard();
-
             //Root.PrintPretty("", true, "");
         }
 
         private void ComputeAnswer()
         {
+            
             while (!(NodesStack.Count == 1 && NodesStack.Peek().AllNextVisited()))
             {
                 Node peek = NodesStack.Peek();
@@ -102,6 +111,7 @@ namespace draughts_ai
                     peek.Benefit = peek.AgentIndex == 0 ? FindMaximumBenefit(peek) : FindMinimumBenefit(peek);
                     peek.Full = true;
                     NodesStack.Pop();
+                    peek.ResetNextNodes();
                 }
                 else
                 {
@@ -118,8 +128,11 @@ namespace draughts_ai
                 }
             }
             NodesStack.Peek().Benefit = FindMaximumBenefit(Root);
+            Root.ResetNextNodes();
+            //logging tree depth
+            Console.Write(String.Concat("Try depth: ", TreeDepth, ", "));
 
-            
+
         }
 
 
