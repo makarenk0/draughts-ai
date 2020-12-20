@@ -2,15 +2,15 @@
 	"item": [
 		{
 			"name": "Get game info",
-			"url": "http://192.168.1.19:8081/game"
+			"url": "http://127.0.0.1:8081/game"
 		},
 		{
 			"name": "Connect to the game",
-			"url": "http://192.168.1.19:8081/game?team_name=Maestro"
+			"url": "http://127.0.0.1:8081/game?team_name=Maestro"
 		},
 		{
 			"name": "Make move",
-		    "url": "http://192.168.1.19:8081/move"
+		    "url": "http://127.0.0.1:8081/move"
 		}
 	],
 	"protocolProfileBehavior": {}
