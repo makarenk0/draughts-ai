@@ -94,7 +94,7 @@ namespace draughts_ai
             //Root.PrintPretty("", true, "");
         }
 
-        private void ComputeAnswer()
+        private void ComputeAnswer()//getting the tree result comapring nodes
         {
             
             while (!(NodesStack.Count == 1 && NodesStack.Peek().AllNextVisited()))
@@ -138,7 +138,7 @@ namespace draughts_ai
             return peek.NextNodes.Max(x => x.Key.Benefit);
         }
 
-        private void BuildNextNodes(Node peek)
+        private void BuildNextNodes(Node peek)// build possible variants of the board and put them in nodes
         {
             byte nextAgent = (byte)(peek.AgentIndex == 0 ? 1 : 0);
             List<KeyValuePair<byte[], byte>> nextSteps = peek.State.GetPossibleSteps(nextAgent == 0 ? (MyColor == "RED" ? (byte)1 : (byte)0) : (MyColor == "RED" ? (byte)0 : (byte)1));
