@@ -21,6 +21,8 @@ namespace draughts_ai
 
         public bool Computing { get; set; }
 
+        //public Dictionary<int, List<sbyte>> _benefitsOnLevel;
+
         public MinimaxTree(Board board, String color)
         {
             TreeDepth = _minTreeDepth;
@@ -30,12 +32,17 @@ namespace draughts_ai
             NodesStack = new Stack<Node>();
             FirstPossibleVariants = true;
             MustBeat = false;
+
+            //_benefitsOnLevel = new Dictionary<int, List<sbyte>>();
+
             Console.WriteLine("New step computing start:");
 
             Root = new Node(0, GameBoard);
             NodesStack.Push(Root);
 
             ConstructTree();  //default answer
+
+
         }
 
 
@@ -72,7 +79,7 @@ namespace draughts_ai
                 }
             }
             Root.ResetNextNodes();
-           
+
 
 
             if (Computing)
@@ -96,16 +103,24 @@ namespace draughts_ai
 
         private void ComputeAnswer()//getting the tree result comapring nodes
         {
-            
+
             while (!(NodesStack.Count == 1 && NodesStack.Peek().AllNextVisited()))
             {
                 Node peek = NodesStack.Peek();
                 if (peek.AllNextVisited())
                 {
                     peek.Benefit = peek.AgentIndex == 0 ? FindMaximumBenefit(peek) : FindMinimumBenefit(peek);
+
+                    //_benefitsOnLevel.Add(NodesStack.Count, new List<sbyte>());//attempt to do alpha beta for minimax tree
+                    //_benefitsOnLevel[NodesStack.Count].Add(peek.Benefit);
+                    //if ((NodesStack.Count % 2 == 1 && _benefitsOnLevel[NodesStack.Count].Max() > peek.Benefit) || (NodesStack.Count % 2 == 0 && _benefitsOnLevel[NodesStack.Count].Min() < peek.Benefit))
+                    //{
+                    //    NodesStack.Pop();
+                    //}
                     peek.Full = true;
                     NodesStack.Pop();
                     peek.ResetNextNodes();
+
                 }
                 else
                 {
@@ -172,7 +187,7 @@ namespace draughts_ai
                     peek.NextNodes.Add(new KeyValuePair<Node, byte[]>(next, step.Key));
                 }
             }
-            
+
         }
 
         public void ComputeBenefitAndFinalize(Node node)
