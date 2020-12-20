@@ -53,7 +53,7 @@ namespace draughts_ai
         //agent index 0 - Red
         //agent index 1 - Black
         // KeyValuePair 1)steps 2)amount of beaten men
-        public List<KeyValuePair<byte[], byte>> GetPossibleSteps(byte agentIndex)
+        public List<KeyValuePair<byte[], byte>> GetPossibleSteps(byte agentIndex)//possible moves(boards) in bytes - look tests
         {
             List<KeyValuePair<byte[], byte>> result = new List<KeyValuePair<byte[], byte>>();
             result.AddRange(BeatingSteps(agentIndex));
@@ -61,7 +61,7 @@ namespace draughts_ai
             return result;
         }
 
-        private List<KeyValuePair<byte[], byte>> SimpleSteps(int agentIndex)
+        private List<KeyValuePair<byte[], byte>> SimpleSteps(int agentIndex)//possible moves 
         {
             List<KeyValuePair<byte[], byte>> steps = new List<KeyValuePair<byte[], byte>>();
             int manId = agentIndex == 0 ? 1 : 2;
@@ -88,7 +88,7 @@ namespace draughts_ai
             return steps.Where(x => x.Key.Length != 0).ToList();
         }
 
-        private List<KeyValuePair<byte[], byte>> BeatingSteps(byte agentIndex)
+        private List<KeyValuePair<byte[], byte>> BeatingSteps(byte agentIndex)//possible beating moves using BeatFromCell need to track who beats
         {
             int manId = agentIndex == 0 ? 1 : 2;
             int kingId = agentIndex == 0 ? 3 : 4;
@@ -110,7 +110,7 @@ namespace draughts_ai
             return result;
         }
 
-        private List<KeyValuePair<byte[], byte>> BeatFromCell(byte agentIndex, int x, int y, byte alreadyBeaten, byte[] path, bool isKing = false)
+        private List<KeyValuePair<byte[], byte>> BeatFromCell(byte agentIndex, int x, int y, byte alreadyBeaten, byte[] path, bool isKing = false)//recusrsice function for beating 
         {
             byte[] toBeat = new byte[] { agentIndex == 1 ? (byte)1 : (byte)2, agentIndex == 1 ? (byte)3 : (byte)4 };
             byte[] tryFuther = new byte[path.Length + 1];
@@ -169,7 +169,7 @@ namespace draughts_ai
                 if (EmptyAndExist(startX, startY)) {
                     moves.Add(new KeyValuePair<byte[], byte>(new byte[] { ConvertToPDN(x, y), ConvertToPDN(startX, startY) }, 0));
 
-                    ////first step  TO DO: reduce dublicating code   // if you want standart draughts with king moving along digonal unlimitly uncomment this code
+                    ////first step  TO DO: reduce dublicating code   // if you want standart draughts with king moving along digonal unlimitly uncomment this code using russian rules
                     //startX += arr[i % 2];
                     //startY += arr[i / 2];
 

@@ -56,7 +56,7 @@ namespace draughts_ai
 
                 MinimaxTree tree = null;
 
-                Task.Delay((int)((ReqExecutor.AvailableTime * 1000) - 150)).ContinueWith(t => {
+                Task.Delay((int)((ReqExecutor.AvailableTime * 1000) - 150)).ContinueWith(t => { //makes move when time is up, -150 just to be sure
                     tree.Computing = false;
                     for (int i = 1; i < tree.Answer.Length; i++)
                     {
@@ -69,7 +69,7 @@ namespace draughts_ai
                 });
 
                 tree = new MinimaxTree(freshData, ReqExecutor.MyColor);
-                while (SearchingAnswer)
+                while (SearchingAnswer)// if there is enough time add depth to tree
                 {
                     if (!tree.MustBeat)
                     {
