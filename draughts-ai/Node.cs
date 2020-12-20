@@ -9,7 +9,7 @@ namespace draughts_ai
         public byte AgentIndex { get; set; }  //0 player, 1 - enemy
         public List<KeyValuePair<Node, byte[]>> NextNodes { get; set; }
         public sbyte Benefit { get; set; }
-        public bool Full { get; set; }
+        public bool Full { get; set; }//if it checked
 
         public Board State { get; set; }
 
@@ -37,7 +37,7 @@ namespace draughts_ai
             return true;
         }
 
-        public void ResetNextNodes()
+        public void ResetNextNodes()// for checking nodes
         {
            
             for (int i = 0; i < NextNodes.Count; i++)
