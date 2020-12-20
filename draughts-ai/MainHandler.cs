@@ -26,7 +26,7 @@ namespace draughts_ai
 
 
                 TimerCallback timeCB = new TimerCallback(timer_Tick);
-                timer = new Timer(timeCB, null, 0, 500);
+                timer = new Timer(timeCB, null, 0, 200);
 
 
                 while (Running)
