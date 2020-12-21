@@ -55,30 +55,31 @@ namespace draughts_ai
 
 
                 MinimaxTree tree = null;
+                Console.WriteLine(ReqExecutor.AvailableTime);
+           
+                    Task.Delay((int)((ReqExecutor.AvailableTime * 1000) - 210)).ContinueWith(t => { //makes move when time is up, -150 just to be sure
+                        tree.Computing = false;
+                        for (int i = 1; i < tree.Answer.Length; i++)
+                        {
+                            String move = String.Concat("[", tree.Answer[i - 1], ", ", tree.Answer[i], "]");
+                            ReqExecutor.MakeMove(move);
+                            Thread.Sleep(50);
+                        }
+                        Console.WriteLine('\n');
+                        SearchingAnswer = false;
+                    });
 
-                Task.Delay((int)((ReqExecutor.AvailableTime * 1000) - 150)).ContinueWith(t => { //makes move when time is up, -150 just to be sure
-                    tree.Computing = false;
-                    for (int i = 1; i < tree.Answer.Length; i++)
+                    tree = new MinimaxTree(freshData, ReqExecutor.MyColor);
+                    while (SearchingAnswer)// if there is enough time add depth to tree
                     {
-                        String move = String.Concat("[", tree.Answer[i - 1], ", ", tree.Answer[i], "]");
-                        ReqExecutor.MakeMove(move);
-                        Thread.Sleep(50);
+                        if (!tree.MustBeat)
+                        {
+                            tree.TreeDepth += 1;
+                            tree.ConstructTree();
+                        }
                     }
-                    SearchingAnswer = false;
-                    Console.WriteLine('\n');
-                });
-
-                tree = new MinimaxTree(freshData, ReqExecutor.MyColor);
-                while (SearchingAnswer)// if there is enough time add depth to tree
-                {
-                    if (!tree.MustBeat)
-                    {
-                        tree.TreeDepth += 1;
-                        tree.ConstructTree();
-                    }   
-                }
-                tree = null;
-                GC.Collect();  //Garbage collector forcing 
+                    tree = null;
+                    GC.Collect();  //Garbage collector forcing 
             }
             else if(tryRequest.Key == 2)
             {
