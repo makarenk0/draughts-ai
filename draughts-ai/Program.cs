@@ -6,7 +6,7 @@ namespace draughts_ai
     {
         static void Main(string[] args)
         {
-            MainHandler handler = new MainHandler("../../../data/requests_patterns.json"); //
+            MainHandler handler = new MainHandler("data/requests_patterns.json"); //
             Console.ReadLine();
         }
     }

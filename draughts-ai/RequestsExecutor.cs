@@ -49,7 +49,7 @@ namespace draughts_ai
         {
             String board = GetAsync(_getGameInfoRequest).Result;
 
-            using JsonDocument parsedResult = JsonDocument.Parse(board);
+            JsonDocument parsedResult = JsonDocument.Parse(board);
 
             //in case game is over
             if (parsedResult.RootElement.GetProperty("data").GetProperty("status").GetRawText().Trim('\"') == "Game is over")
@@ -111,7 +111,7 @@ namespace draughts_ai
             {
                 String result = PostAsync(_joinGameRequest, httpContent).Result;
 
-                using JsonDocument parsedResult = JsonDocument.Parse(result);
+                JsonDocument parsedResult = JsonDocument.Parse(result);
                 _token = parsedResult.RootElement.GetProperty("data").GetProperty("token").GetRawText().Trim('\"');
                 MyColor = parsedResult.RootElement.GetProperty("data").GetProperty("color").GetRawText().Trim('\"');
 
@@ -139,7 +139,7 @@ namespace draughts_ai
             if (File.Exists(filename))
             {
                 string text = File.ReadAllText(filename);
-                using JsonDocument doc = JsonDocument.Parse(text);
+                JsonDocument doc = JsonDocument.Parse(text);
                 _root = doc.RootElement.Clone();
 
                 _gameInfoRequestPattern = _root.GetProperty("item")[0];
